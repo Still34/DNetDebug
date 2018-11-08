@@ -31,7 +31,7 @@ namespace DNetDebug
             await _command.AddModulesAsync(Assembly.GetEntryAssembly(), _services).ConfigureAwait(false);
         }
 
-        private async Task HandlePostCommandExecutionAsync(CommandInfo commandInfo, ICommandContext context,
+        private async Task HandlePostCommandExecutionAsync(Optional<CommandInfo> commandInfo, ICommandContext context,
             IResult result)
         {
             if (result.Error == CommandError.UnknownCommand) return;
@@ -77,8 +77,7 @@ namespace DNetDebug
             var argPos = 0;
             if (!userMsg.HasCharPrefix('!', ref argPos)) return;
             var context = new SocketCommandContext(_client, userMsg);
-            var result = await _command.ExecuteAsync(context, argPos, _services).ConfigureAwait(false);
-            await HandlePostCommandExecutionAsync(null, context, result).ConfigureAwait(false);
+            await _command.ExecuteAsync(context, argPos, _services).ConfigureAwait(false);
         }
     }
 }
