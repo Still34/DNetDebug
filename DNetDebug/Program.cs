@@ -21,7 +21,7 @@ namespace DNetDebug
 
         public async Task StartAsync()
         {
-            Console.WriteLine("Casino was here");
+            Console.WriteLine("Casino was here, 2018");
             
             var services = ConfigureService();
             var restClient = services.GetRequiredService<DiscordRestClient>();
