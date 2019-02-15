@@ -26,13 +26,12 @@ namespace DNetDebug
         public async Task SetupAsync()
         {
             _client.MessageReceived += HandleCommandAsync;
-            _command.CommandExecuted += HandlePostCommandExecutionAsync;
+            _command.CommandExecuted += HandlePostAsync;
             _command.Log += LoggingHelper.LogAsync;
             await _command.AddModulesAsync(Assembly.GetEntryAssembly(), _services).ConfigureAwait(false);
         }
 
-        private async Task HandlePostCommandExecutionAsync(Optional<CommandInfo> commandInfo, ICommandContext context,
-            IResult result)
+        private async Task HandlePostAsync(Optional<CommandInfo> commandInfo, ICommandContext context, IResult result)
         {
             if (result.Error == CommandError.UnknownCommand) return;
             if (!string.IsNullOrEmpty(result.ErrorReason))

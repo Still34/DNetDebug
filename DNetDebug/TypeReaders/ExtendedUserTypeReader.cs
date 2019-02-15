@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
 using Discord.Rest;
+using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace DNetDebug.TypeReaders
@@ -14,7 +15,7 @@ namespace DNetDebug.TypeReaders
         {
             var result = await base.ReadAsync(context, input, services).ConfigureAwait(false);
             if (result.IsSuccess) return result;
-            var restClient = services.GetService<DiscordRestClient>();
+            var restClient = ((DiscordSocketClient)context.Client).Rest;
             if (restClient == null || !ulong.TryParse(input, out var userId)) return result;
             if (context.Guild != null)
             {

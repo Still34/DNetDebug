@@ -22,22 +22,22 @@ namespace DNetDebug
         public async Task StartAsync()
         {
             Console.WriteLine("Casino was here, 2018");
-            
-            var services = ConfigureService();
-            var restClient = services.GetRequiredService<DiscordRestClient>();
-            var client = services.GetRequiredService<DiscordSocketClient>();
-            var config = services.GetRequiredService<IConfigurationRoot>();
-            client.Log += LoggingHelper.LogAsync;
 
-            services.GetRequiredService<InspectService>();
-            await services.GetRequiredService<CommandHandler>().SetupAsync().ConfigureAwait(false);
-            await client.LoginAsync(TokenType.Bot, config["DiscordDebugToken"]).ConfigureAwait(false);
-            await restClient.LoginAsync(TokenType.Bot, config["DiscordDebugToken"]).ConfigureAwait(false);
-            await client.StartAsync().ConfigureAwait(false);
-            await Task.Delay(-1).ConfigureAwait(false);
+            using (var services = ConfigureService())
+            {
+                var client = services.GetRequiredService<DiscordSocketClient>();
+                var config = services.GetRequiredService<IConfigurationRoot>();
+                client.Log += LoggingHelper.LogAsync;
+
+                services.GetRequiredService<InspectService>();
+                await services.GetRequiredService<CommandHandler>().SetupAsync().ConfigureAwait(false);
+                await client.LoginAsync(TokenType.Bot, config["DiscordDebugToken"]).ConfigureAwait(false);
+                await client.StartAsync().ConfigureAwait(false);
+                await Task.Delay(-1).ConfigureAwait(false);
+            }
         }
 
-        internal IServiceProvider ConfigureService()
+        internal ServiceProvider ConfigureService()
         {
             Log.Logger = new LoggerConfiguration()
                 .WriteTo.Console()
@@ -49,7 +49,6 @@ namespace DNetDebug
                 .AddSingleton(config)
                 .AddSingleton<InspectService>()
                 .AddSingleton<CommandService>()
-                .AddSingleton<DiscordRestClient>()
                 .AddSingleton<DiscordSocketClient>()
                 .AddSingleton<CommandHandler>()
                 .BuildServiceProvider();
